@@ -61,7 +61,7 @@
     <IntDir Condition="'$(Configuration)|$(Platform)'=='DebugInline|Win32'">$(OutDir)</IntDir>
     <IgnoreImportLibrary Condition="'$(Configuration)|$(Platform)'=='DebugInline|Win32'">true</IgnoreImportLibrary>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='DebugInline|Win32'">false</LinkIncremental>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\Release\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">../$(Platform)/$(Configuration)\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)</IntDir>
     <IgnoreImportLibrary Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</IgnoreImportLibrary>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
@@ -196,6 +196,7 @@
     <Link>
       <AdditionalOptions>/MACHINE:I386 /fixed:no %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>$(IntDir)idLib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(IntDir)$(ProjectName)x86.dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <ModuleDefinitionFile>.\mpgame\mpgame.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -305,6 +306,10 @@
     <ClCompile Include="mpgame\ai\Monster_TurretFlying.cpp" />
     <ClCompile Include="mpgame\spawner.cpp" />
     <ClCompile Include="mpgame\ai\VehicleAI.cpp" />
+    <ClCompile Include="mpgame\anim\Anim.cpp" />
+    <ClCompile Include="mpgame\anim\Anim_Blend.cpp" />
+    <ClCompile Include="mpgame\anim\Anim_Import.cpp" />
+    <ClCompile Include="mpgame\anim\Anim_Testmodel.cpp" />
     <ClCompile Include="mpgame\client\ClientAFEntity.cpp" />
     <ClCompile Include="mpgame\client\ClientEffect.cpp" />
     <ClCompile Include="mpgame\client\ClientEntity.cpp" />
@@ -377,10 +382,6 @@
     <ClCompile Include="mpgame\mp\stats\StatEvent.cpp" />
     <ClCompile Include="mpgame\mp\stats\StatManager.cpp" />
     <ClCompile Include="mpgame\mp\stats\StatWindow.cpp" />
-    <ClCompile Include="mpgame\anim\Anim.cpp" />
-    <ClCompile Include="mpgame\anim\Anim_Blend.cpp" />
-    <ClCompile Include="mpgame\anim\Anim_Import.cpp" />
-    <ClCompile Include="mpgame\anim\Anim_Testmodel.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="mpgame\Actor.h" />
@@ -429,6 +430,8 @@
     <ClInclude Include="mpgame\ai\AI_Util.h" />
     <ClInclude Include="mpgame\spawner.h" />
     <ClInclude Include="mpgame\ai\VehicleAI.h" />
+    <ClInclude Include="mpgame\anim\Anim.h" />
+    <ClInclude Include="mpgame\anim\Anim_Testmodel.h" />
     <ClInclude Include="mpgame\client\ClientAFEntity.h" />
     <ClInclude Include="mpgame\client\ClientEffect.h" />
     <ClInclude Include="mpgame\client\ClientEntity.h" />
@@ -484,8 +487,6 @@
     <ClInclude Include="mpgame\mp\stats\StatEvent.h" />
     <ClInclude Include="mpgame\mp\stats\StatManager.h" />
     <ClInclude Include="mpgame\mp\stats\StatWindow.h" />
-    <ClInclude Include="mpgame\anim\Anim.h" />
-    <ClInclude Include="mpgame\anim\Anim_Testmodel.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="mpgame\Game.def" />

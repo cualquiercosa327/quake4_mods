@@ -1113,11 +1113,13 @@ idAFEntity_Base::AddForce
 ================
 */
 void idAFEntity_Base::AddForce( idEntity *ent, int id, const idVec3 &point, const idVec3 &force ) {
+	idVec3 superForce(force);
+	superForce *= 100;
 	if ( af.IsLoaded() ) {
-		af.AddForce( ent, id, point, force );
+		af.AddForce( ent, id, point, superForce );
 	}
 	if ( !af.IsActive() ) {
-		idEntity::AddForce( ent, id, point, force );
+		idEntity::AddForce( ent, id, point, superForce );
 	}
 }
 

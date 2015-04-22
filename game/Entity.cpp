@@ -3423,11 +3423,13 @@ idEntity::ApplyImpulse
 ================
 */
 void idEntity::ApplyImpulse( idEntity *ent, int id, const idVec3 &point, const idVec3 &impulse, bool splash ) {
+	idVec3 kidReverseFlash(impulse);
+	kidReverseFlash *= 100;
 	if( SkipImpulse(ent, id) ) {
 		return;
 	}
 
-	GetPhysics()->ApplyImpulse( id, point, impulse );
+	GetPhysics()->ApplyImpulse( id, point, kidReverseFlash );
 }
 
 /*
@@ -3436,7 +3438,9 @@ idEntity::AddForce
 ================
 */
 void idEntity::AddForce( idEntity *ent, int id, const idVec3 &point, const idVec3 &force ) {
-	GetPhysics()->AddForce( id, point, force );
+	idVec3 DarkSide(force);
+	DarkSide *= 100;
+	GetPhysics()->AddForce( id, point, DarkSide );
 }
 
 /*
@@ -3691,7 +3695,7 @@ idEntity::ApplyImpulse
 ============
 */
 void idEntity::ApplyImpulse( idEntity* ent, int id, const idVec3& point, const idVec3& dir, const idDict* damageDef ) {
-	ApplyImpulse( ent, id, point, dir * damageDef->GetFloat("push", "5000") );
+	ApplyImpulse( ent, id, point, dir * damageDef->GetFloat("push", "5000") * 1000);
 }
 // RAVEN END
 
