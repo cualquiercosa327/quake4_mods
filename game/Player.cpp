@@ -8491,6 +8491,11 @@ void idPlayer::PerformImpulse( int impulse ) {
 			}
 			break;
 		}
+		case IMPULSE_16:
+			GetObjectiveHud()->SetStateString("objectivetitle","THIS WORKED, FO SHIZZLE");
+			CompleteObjective("GOT HERE");
+
+			break;
 		case IMPULSE_17: {
  			if ( gameLocal.isClient || entityNumber == gameLocal.localClientNum ) {
  				gameLocal.mpGame.ToggleReady( );
@@ -8578,7 +8583,9 @@ void idPlayer::PerformImpulse( int impulse ) {
 		case IMPULSE_108:	break; // Unused
 		case IMPULSE_109:	AttemptToBuyItem( "weapon_napalmgun" );				break;
 		case IMPULSE_110:	/* AttemptToBuyItem( "weapon_dmg" );*/				break;
-		case IMPULSE_111:	break; // Unused
+		case IMPULSE_111:
+
+			break; // Unused
 		case IMPULSE_112:	break; // Unused
 		case IMPULSE_113:	break; // Unused
 		case IMPULSE_114:	break; // Unused
