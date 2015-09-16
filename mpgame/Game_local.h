@@ -1,6 +1,7 @@
 #ifndef __GAME_LOCAL_H__
 #define	__GAME_LOCAL_H__
 
+
 // RAVEN BEGIN
 // jsinger: attempt to eliminate cross-DLL allocation issues
 #ifdef RV_UNIFIED_ALLOCATOR
