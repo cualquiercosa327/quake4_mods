@@ -385,6 +385,10 @@ idCVar pm_thirdPersonDeath(			"pm_thirdPersonDeath",		"0",			CVAR_GAME | CVAR_BO
 idCVar pm_modelView(				"pm_modelView",				"0",			CVAR_GAME | CVAR_NETWORKSYNC | CVAR_INTEGER, "draws camera from POV of player model (1 = always, 2 = when dead)", 0, 2, idCmdSystem::ArgCompletion_Integer<0,2> );
 idCVar pm_airTics(					"pm_air",					"1800",			CVAR_GAME | CVAR_NETWORKSYNC | CVAR_INTEGER, "how long in milliseconds the player can go without air before he starts taking damage" );
 
+
+// JOS: CVars for timing lmao, cvars
+idCVar pm_racetimer(				"pm_racetimer",				"0",			CVAR_GAME | CVAR_NETWORKSYNC | CVAR_FLOAT, "race timer" );
+
 // RAVEN BEGIN
 // asalmon: parameters for aim assistance on Xenon - or a non-final pc build so Caryn can edit the guis
 #if defined( _XBOX ) || !defined( _FINAL )

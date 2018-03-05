@@ -346,6 +346,9 @@ void idTrigger_Multi::Spawn( void ) {
 	spawnArgs.GetFloat( "random", "0", random );
 	spawnArgs.GetFloat( "delay", "0", delay );
 	spawnArgs.GetFloat( "random_delay", "0", random_delay );
+
+	// JOS: Set race state
+	spawnArgs.GetInt( "set_race_state", "0", setRaceState );
 	
 	if ( random && ( random >= wait ) && ( wait >= 0 ) ) {
 		random = wait - 1;
@@ -474,6 +477,13 @@ void idTrigger_Multi::TriggerAction( idEntity *activator ) {
 		// called while looping through area links...
 		nextTriggerTime = gameLocal.time + 1;
 		PostEventMS( &EV_Remove, 0 );
+	}
+
+	// JOS: Set race state for player
+	if (setRaceState == 1) {
+		((idPlayer*)activator)->Event_SetRaceEnabled(true);
+	} else if (setRaceState == 2) {
+		((idPlayer*)activator)->Event_SetRaceEnabled(false);
 	}
 }
 

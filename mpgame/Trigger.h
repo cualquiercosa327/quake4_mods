@@ -84,6 +84,7 @@ private:
 	int					buyZoneTrigger;
 	int					controlZoneTrigger;
 	int					prevZoneController;
+	int					setRaceState;
 
 	idList<idPlayer*>	playersInTrigger;
 

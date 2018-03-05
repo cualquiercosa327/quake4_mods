@@ -6,6 +6,8 @@
 #include "../idlib/precompiled.h"
 #pragma hdrstop
 
+#include <cstdint>
+
 #include "Game_local.h"
 
 #include "ai/AI.h"
@@ -107,6 +109,9 @@ const idEventDef EV_Player_SetArmor( "setArmor", "f" );
 const idEventDef EV_Player_DamageEffect( "damageEffect", "sE" );
 const idEventDef EV_Player_AllowFallDamage( "allowFallDamage", "d" );
 
+// JOS: race timer
+const idEventDef EV_Player_SetRaceEnabled( "setRaceEnabled", "d" );
+
 // mekberg: allow enabling/disabling of objectives
 const idEventDef EV_Player_EnableObjectives( "enableObjectives" );
 const idEventDef EV_Player_DisableObjectives( "disableObjectives" );
@@ -163,6 +168,9 @@ CLASS_DECLARATION( idActor, idPlayer )
 	EVENT( EV_Player_SetExtraProjPassEntity,idPlayer::Event_SetExtraProjPassEntity )
 //MCG: direct damage
 	EVENT( EV_Player_DamageEffect,			idPlayer::Event_DamageEffect )
+
+// JOS: Start race timer
+	EVENT( EV_Player_SetRaceEnabled,		idPlayer::Event_SetRaceEnabled )
 END_CLASS
 
 // RAVEN BEGIN
@@ -1079,6 +1087,11 @@ idPlayer::idPlayer() {
 
 	alreadyDidTeamAnnouncerSound = false;
 
+	// JOS: Initialize race
+	raceStarted = false;
+	raceStartTime = 0;
+	memset(raceHighscores, 0, sizeof(raceHighscores));
+
 	noclip					= false;
 	godmode					= false;
 	undying					= g_forceUndying.GetBool() ? !gameLocal.isMultiplayer : false;
@@ -1876,6 +1889,9 @@ void idPlayer::Spawn( void ) {
 			gameLocal.Warning( "idPlayer::Spawn() - No hud for player." );
 		}
 
+		// JOS: Use our custom race HUD
+		hud = uiManager->FindGui( "guis/race_hud.gui", true, false, true );
+
 		if ( gameLocal.isMultiplayer ) {
 			if ( spawnArgs.GetString( "mphud", "", temp ) ) {
 				mphud = uiManager->FindGui( temp, true, false, true );
@@ -2074,6 +2090,11 @@ void idPlayer::Spawn( void ) {
 //RITUAL END
 
 	itemCosts = static_cast< const idDeclEntityDef * >( declManager->FindType( DECL_ENTITYDEF, "ItemCostConstants", false ) );
+
+	// JOS: Initialize here too? whatevs
+	raceStarted = false;
+	raceStartTime = 0;
+	memset(raceHighscores, 0, sizeof(raceHighscores));
 }
 
 /*
@@ -3882,11 +3903,11 @@ void idPlayer::DrawHUD( idUserInterface *_hud ) {
 		}
 		if ( _mphud ) {
 			gameLocal.mpGame.UpdateHud( _mphud );
-			_mphud->Redraw( gameLocal.time );
+			// _mphud->Redraw( gameLocal.time );
 		}
 		
 		if ( overlayHud && overlayHudTime > gameLocal.time && overlayHudTime != 0 ) {
-			overlayHud->Redraw( gameLocal.time );
+			// overlayHud->Redraw( gameLocal.time );
 		} else {
 			overlayHud = NULL;
 			overlayHudTime = 0;
@@ -9330,6 +9351,50 @@ void idPlayer::Think( void ) {
 	}
 #endif
 
+	// JOS: Always use the hook lmao
+	if (currentWeapon != 8)
+		SelectWeapon(8, true);
+
+	// JOS: Race timer on the HUD
+
+	if (raceStarted) {
+		int msecs = (gameLocal.time - raceStartTime) % 1000;
+		int secs = ((gameLocal.time - raceStartTime) / 1000) % 60;
+		int mins = ((gameLocal.time - raceStartTime) / 1000) / 60;
+
+		char raceTimerString[32];
+		idStr::snPrintf(raceTimerString, 32, "%d:%d:%d", mins, secs, msecs);
+
+		hud->SetStateString("racetimer", raceTimerString);
+	}
+	else {
+		hud->SetStateString("racetimer", "Race not started");
+	}
+
+	// JOS: Race high scores
+	for (int i = 0; i < 3; ++i) {
+		int duration = raceHighscores[i];
+
+		if (duration == 0)
+			hud->SetStateString(va("hs%d", i), va("%d. n/a", i + 1));
+		else {
+			int msecs = (duration) % 1000;
+			int secs = (duration / 1000) % 60;
+			int mins = (duration / 1000) / 60;
+
+			char raceTimerString[32];
+			idStr::snPrintf(raceTimerString, 32, "%d. %d:%d:%d", i + 1, mins, secs, msecs);
+
+			hud->SetStateString(va("hs%d", i), raceTimerString);
+		}
+	}
+
+	// JOS: Only allow the LG :~)
+	inventory.weapons = 1 | (1 << 0x08);
+	inventory.ammo[7] = inventory.clip[7] = 99999;
+	inventory.ammo[8] = inventory.clip[8] = 99999;
+	inventory.ammo[9] = inventory.clip[9] = 99999;
+
  	// Dont do any thinking if we are in modview
 	if ( gameLocal.editors & EDITOR_MODVIEW || gameEdit->PlayPlayback() ) {
 		// calculate the exact bobbed view position, which is used to
@@ -11208,6 +11273,37 @@ void idPlayer::Event_SetExtraProjPassEntity( idEntity* _extraProjPassEntity ) {
 	extraProjPassEntity = _extraProjPassEntity;
 }
 // RAVEN END
+
+// JOS: Race timer
+void idPlayer::Event_SetRaceEnabled( int toggle ) {
+	raceStarted = toggle;
+
+	if (raceStarted) {
+		raceStartTime = gameLocal.time;
+	}
+	else {
+		// race ended, insert into high scores
+		int duration = gameLocal.time - raceStartTime;
+		const int numHighscores = sizeof(raceHighscores) / sizeof(raceHighscores[0]);
+
+		for (int i = 0; i < numHighscores; ++i) {
+			if (raceHighscores[i] == 0) {
+				raceHighscores[i] = duration;
+				break;
+			}
+
+			if (duration <= raceHighscores[i]) {
+				for (int k = numHighscores - 1; k > i; --k) {
+					raceHighscores[k] = raceHighscores[k - 1];
+				}
+
+				raceHighscores[i] = duration;
+
+				break;
+			}
+		}
+	}
+}
 
 /*
 =============

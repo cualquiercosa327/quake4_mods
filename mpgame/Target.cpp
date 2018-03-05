@@ -2074,7 +2074,6 @@ idTarget_Tip::idTarget_Tip
 ================
 */
 idTarget_Tip::idTarget_Tip( void ) {
-	playerPos.Zero();
 }
 
 /*
@@ -2083,7 +2082,30 @@ idTarget_Tip::Spawn
 ================
 */
 void idTarget_Tip::Spawn( void ) {
+	index = spawnArgs.GetInt("index");
+
+	hidden = false;
+	// gameLocal.GetLocalPlayer()->waypoints.AddUnique(this);
 }
+
+/*
+================
+idTarget_Tip::Show
+================
+*/
+void idTarget_Tip::Show( void ) {
+	hidden = false;
+}
+
+/*
+================
+idTarget_Tip::Hide
+================
+*/
+void idTarget_Tip::Hide( void ) {
+	hidden = true;
+}
+
 
 /*
 ================
@@ -2091,7 +2113,6 @@ idTarget_Tip::Save
 ================
 */
 void idTarget_Tip::Save( idSaveGame *savefile ) const {
-	savefile->WriteVec3( playerPos );
 }
 
 /*
@@ -2100,7 +2121,6 @@ idTarget_Tip::Restore
 ================
 */
 void idTarget_Tip::Restore( idRestoreGame *savefile ) {
-	savefile->ReadVec3( playerPos );
 }
 
 /*
@@ -2109,11 +2129,6 @@ idTarget_Tip::Event_Activate
 ================
 */
 void idTarget_Tip::Event_GetPlayerPos( void ) {
-	idPlayer *player = gameLocal.GetLocalPlayer();
-	if ( player ) {
-		playerPos = player->GetPhysics()->GetOrigin();
-		PostEventMS( &EV_TipOff, 100 );
-	}
 }
 
 /*
@@ -2139,15 +2154,6 @@ idTarget_Tip::Event_TipOff
 ================
 */
 void idTarget_Tip::Event_TipOff( void ) {
-	idPlayer *player = gameLocal.GetLocalPlayer();
-	if ( player ) {
-		idVec3 v = player->GetPhysics()->GetOrigin() - playerPos;
-		if ( v.Length() > 96.0f ) {
-			player->HideTip();
-		} else {
-			PostEventMS( &EV_TipOff, 100 );
-		}
-	}
 }
 
 

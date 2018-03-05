@@ -555,8 +555,13 @@ public:
 	void				Save( idSaveGame *savefile ) const;
 	void				Restore( idRestoreGame *savefile );
 
+	void				Show();
+	void				Hide();
+
+	bool hidden;
+
 private:
-	idVec3				playerPos;
+	int                 index;
 
 	void				Event_Activate( idEntity *activator );
 	void				Event_TipOff( void );

@@ -28,6 +28,9 @@ extern const idEventDef EV_Player_SetArmor;
 extern const idEventDef EV_Player_SetExtraProjPassEntity;
 extern const idEventDef EV_Player_DamageEffect;
 
+// JOS: race timer
+extern const idEventDef EV_Player_SetRaceEnabled;
+
 const float THIRD_PERSON_FOCUS_DISTANCE	= 512.0f;
 const int	LAND_DEFLECT_TIME			= 150;
 const int	LAND_RETURN_TIME			= 300;
@@ -267,6 +270,8 @@ public:
 	int						secretAreasDiscovered;
 };
 
+class idTarget_Tip;
+
 class idPlayer : public idActor {
 public:
 
@@ -392,6 +397,16 @@ public:
 	// timers
 	int						minRespawnTime;			// can respawn when time > this, force after g_forcerespawn
 	int						maxRespawnTime;			// force respawn after this time
+
+	// JOS: race timer
+	int						raceStartTime;
+	bool					raceStarted;
+
+	int						raceHighscores[3];
+
+	// JOS: waypoints
+	int						currentWaypoint = 0;
+	idList<idTarget_Tip*>	waypoints;
 
 	// the first person view values are always calculated, even
 	// if a third person view is used
@@ -774,6 +789,9 @@ public:
 	bool					IsLocalClient( void ) const { return entityNumber == gameLocal.localClientNum || IsFakeClient(); }
 	bool					IsSpectatedClient( void ) const;
 	bool					IsWaitingForPredictAck( void ) const;
+
+	// JOS: Race timer
+	void					Event_SetRaceEnabled		( int toggle );
 
 protected:
 	void					SetupHead( const char* modelKeyName = "", idVec3 headOffset = idVec3(0, 0, 0) );
