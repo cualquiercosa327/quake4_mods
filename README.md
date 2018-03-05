@@ -3,9 +3,7 @@
 Joseph Delgado
 jd325@njit.edu
 
-<video poster="https://i.imgur.com/jIUWrID.png" width="618" height="347" controls preload> 
-    <source src="http://rly.sexy/static/snaps/2018-03-05_10-44-54.mp4"></source> 
-</video>
+[![Video](https://i.imgur.com/Hv3U9Nu.png)](http://rly.sexy/static/snaps/2018-03-05_10-44-54.mp4)
 
 How to launch:
 
